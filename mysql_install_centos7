@@ -20,3 +20,10 @@ This document describe the step by step instruction on how to install MYSQL in C
     sudo mysql_secure_installation
 11. Login to mysql
     mysql -u root -p
+12. Sometimes the password complexity requirement is really pain in the ass.
+    Let's remove them:
+    mysql -h localhost -u root -p
+    uninstall plugin validate_password;
+    TO ENABLE IT AGAIN
+    install plugin validate_password SONAME 'validate_password.so';
+    
