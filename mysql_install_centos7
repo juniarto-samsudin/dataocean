@@ -1,1 +1,22 @@
 This document describe the step by step instruction on how to install MYSQL in CENTOS 7
+
+1. Go to https://dev.mysql.com/downloads/repo/yum/
+2. Choose the version that suits your system architecture
+3. For example, you are going to select Red Hat Enterprise Linux 7 / Oracle Linux 7 (Architecture Independent), RPM Package.
+   wget https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
+4. Verify the package, make sure the package is not corrupted or changed.
+   md5sum mysql57-community-release-el7-11.noarch.rpm
+5. sudo rpm -ivh mysql57-community-release-el7-9.noarch.rpm
+   This will add two necessary repositories in your yum configuration.
+6. Install mysql server
+   yum install mysql-server
+7. Start MySQL
+   systemctl start mysqld
+8. Check the status of MySQL
+   systemctl status mysqld
+9. A temporary password is generated during the installation. You can grep it with
+   sudo grep 'temporary password' /var/log/mysqld.log
+10. Use this password to initialize password.
+    sudo mysql_secure_installation
+11. Login to mysql
+    mysql -u root -p
