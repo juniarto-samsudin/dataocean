@@ -26,4 +26,6 @@ This document describe the step by step instruction on how to install MYSQL in C
     uninstall plugin validate_password;
     TO ENABLE IT AGAIN
     install plugin validate_password SONAME 'validate_password.so';
+13. Change root password:
+    ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass';
     
