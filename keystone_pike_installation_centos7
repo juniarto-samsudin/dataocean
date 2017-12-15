@@ -1,0 +1,60 @@
+Openstack Keystone Pike Installation on CENTOS 7
+
+1. Log into mysql
+   mysql -u root -p
+2. Create keystone database
+   CREATE DATABASE keystone;
+3. Grant proper access to the keystone database
+   GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY 'password';
+   GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFED BY 'password';
+4. Exit mysql
+5. Install keystone Pike, EPEL
+   yum --enablerepo=centos-openstack-pike,epel -y install openstack-keystone openstack-utils python-openstackclient httpd mod_wsgi
+6. Install memcached
+   yum install memcached
+   systemctl enable memcached
+   systemctl start memcached
+7. Configure keystone
+   [root@jun-gluster1 ~]# vi /etc/keystone/keystone.conf
+		# line 529: uncomment and specify Memcache server
+		memcache_servers = 192.168.100.6:11211
+		# line 662: add ( MariaDB connection info )
+		connection = mysql+pymysql://keystone:password@192.168.100.6/keystone
+		[token]
+		# line 2715: add
+		provider = fernet
+		driver = memcache
+   [root@jun-gluster1 ~]# su -s /bin/bash keystone -c "keystone-manage db_sync"
+
+		# initialize keys
+   [root@jun-gluster1 ~]# keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone 
+   [root@jun-gluster1 ~]# keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
+
+   # define own host (controller host)
+   [root@jun-gluster1 ~]# export controller=192.168.100.6
+
+   # bootstrap keystone (replace any password you like for "adminpassword" section)
+   [root@jun-gluster1 ~]# keystone-manage bootstrap --bootstrap-password adminpassword \
+                 --bootstrap-admin-url http://$controller:35357/v3/ \
+                 --bootstrap-internal-url http://$controller:35357/v3/ \
+--bootstrap-public-url http://$controller:5000/v3/ \
+--bootstrap-region-id RegionOne
+
+   # Enable config for Keystone and start Apache httpd
+   Edit /etc/httpd/conf/httpd.conf file and configure the ServerName option
+         ServerName controller
+
+
+   [root@jun-gluster1 ~]# ln -s /usr/share/keystone/wsgi-keystone.conf /etc/httpd/conf.d/ 
+   [root@jun-gluster1 ~]# systemctl start httpd 
+   [root@jun-gluster1 ~]# systemctl enable httpd 
+
+
+  #Configure the administrative account
+   	$ export OS_USERNAME=admin
+	$ export OS_PASSWORD=adminpassword   ==> use the password configured during keystone bootstrap
+	$ export OS_PROJECT_NAME=admin
+	$ export OS_USER_DOMAIN_NAME=Default
+	$ export OS_PROJECT_DOMAIN_NAME=Default
+	$ export OS_AUTH_URL=http://controller:35357/v3
+	$ export OS_IDENTITY_API_VERSION=3
