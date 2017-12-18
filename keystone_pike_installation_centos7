@@ -88,4 +88,32 @@ openstack --os-auth-url http://controller:5000/v3 \
   --os-project-name demo --os-username demo token issue
   Unset the temporary OS_AUTH_URL and OS_PASSWORD environment variable, if you previously has set these variables.
 
+OpenStack Client Environment Scripts
+1. Admin environment script. Create and edit the admin-openrc file and add the following content:
+   	export OS_PROJECT_DOMAIN_NAME=Default
+	export OS_USER_DOMAIN_NAME=Default
+	export OS_PROJECT_NAME=admin
+	export OS_USERNAME=admin
+	export OS_PASSWORD=adminpassword
+	export OS_AUTH_URL=http://controller:35357/v3
+	export OS_IDENTITY_API_VERSION=3
+	export OS_IMAGE_API_VERSION=2
+2. Demo environment script. Create and edit the demo-openrc file and add the following content:
+	export OS_PROJECT_DOMAIN_NAME=Default
+	export OS_USER_DOMAIN_NAME=Default
+	export OS_PROJECT_NAME=demo
+	export OS_USERNAME=demo
+	export OS_PASSWORD=password
+	export OS_AUTH_URL=http://controller:5000/v3
+	export OS_IDENTITY_API_VERSION=3
+	export OS_IMAGE_API_VERSION=2
+3. Let say you want to run command as admin. You just have to load the script admin-openrc
+           . admin-openrc
+   and then 
+   	    openstack token issue
+	    
+   To get token for demo user, do the same thing:
+           . demo-openrc
+   and then
+   	    openstack token issue
 	
