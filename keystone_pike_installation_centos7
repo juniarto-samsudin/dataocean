@@ -86,5 +86,6 @@ openstack --os-auth-url http://controller:35357/v3 \
 openstack --os-auth-url http://controller:5000/v3 \
   --os-project-domain-name Default --os-user-domain-name Default \
   --os-project-name demo --os-username demo token issue
+  Unset the temporary OS_AUTH_URL and OS_PASSWORD environment variable, if you previously has set these variables.
 
 	
