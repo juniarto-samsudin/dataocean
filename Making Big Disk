@@ -1,0 +1,10 @@
+We are going to create a 10 G file. either using dd, fallocate or truncate.
+a. dd if=/dev/zero of=tengigfile bs=1M count=10240
+b. fallocate -l 10G tengigfile
+   to addd additional 10 more gigs to the end of the tengigfile
+   fallocate -o 10G -l 10G tengigfile
+   where -o is the offset, or the start point of the fallocate
+c. truncate -s 10G tengigfile
+   to add additional 10 more gigs to the end of the tengigfile
+   truncate -s +10G tengigfile
+   
