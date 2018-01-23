@@ -54,5 +54,11 @@
     systemctl start robinhood.service
     #or if you manage multiple filesystems:
     systemctl start robinhood@fsname
+    
+16. You can monitor scan progress, or changelog reader activity by looking at robinhood statistics (dumped every
+    15 min by default):
+    $grep STATS /var/log/robinhood.log
+    
+    
 
     
