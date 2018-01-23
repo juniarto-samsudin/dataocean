@@ -1,1 +1,30 @@
 
+1. Install mysql server
+2.mysqladmin create robinhood_db
+  mysql robinhood_db
+  mysql> create user 'robinhood'@'localhost' identified by 'password';
+  mysql> GRANT USAGE ON robinhood_db.* TO 'robinhood'@'localhost' ;
+  mysql> GRANT ALL PRIVILEGES ON robinhood_db.* TO 'robinhood'@'localhost;
+  mysql> GRANT SUPER ON *.* TO 'robinhood'@'localhost' IDENTIFIED BY 'password' ;
+  mysql> FLUSH PRIVILEGES;
+3.Download 'robinhood-lustre' and 'robinhood-adm' packages from http://sourceforge.net/projects/robinhood/files/robinhood and 
+  install them on the robinhood host.Make sure to get the 'robinhood-lustre' package for the version of Lustre you run e.g. 
+  robinhood-lustre-3.0-1.'''lustre2.5'''.el6.x86_64.rpm for lustre 2.5.
+  In case you want to uninstall them, the package name is robinhood-lustre, robinhood-adm.
+4. Robinhood configuration file
+   cp /etc/robinhood.d/templates/example_lhsm.conf /etc/robinhood.d/temp.conf
+   where temp is my lustre file system.
+5. In 'ListManager' block, set database connection parameters:
+   server = "localhost";
+   db = "robinhood_db";
+   user= "robinhood";
+   password="password";
+6. In 'General' block, set Lustre filesystem root path, 'lustre' filesystem type:
+   fs_path = /mnt/lustre;
+   fs_type = lustre;
+7. In 'ChangeLog' block, check that the specified 'reader_id' matches the id returned by 'lctl changelog_register':
+   reader_id = "cl1";
+8. Include policy definitions for Lustre/HSM:
+   %include "include/lhsm.inc"
+   * This include defines Lustre/HSM policies: 'lhsm_archive', 'lhsm_release' and 'lhsm_remove'.
+   * This sets up specific database fields to manage Lustre/HSM status and other entry specific properties.
