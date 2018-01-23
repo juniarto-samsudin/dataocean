@@ -28,3 +28,31 @@
    %include "include/lhsm.inc"
    * This include defines Lustre/HSM policies: 'lhsm_archive', 'lhsm_release' and 'lhsm_remove'.
    * This sets up specific database fields to manage Lustre/HSM status and other entry specific properties.
+9. On lustre MDS, activate HSM Coordinator
+    $lctl set_param mdt.temp-MDT0000.hsm_control=enabled
+    To verify that the coordinator is running correctly
+    $lctl get_param mdt.temp-MDT0000.hsm_control
+    mdt.temp-MDT0000.hsm_control=enabled
+10. The retrieve the registered copytool instances (agents UUID), execute the following command on MDS:
+    $lctl get_param -n mdt.temp-MDT0000.hsm.agents
+11. Now, let us execute copytool on agent/lustre client node:
+    $lhsmtool_posix --daemon --hsm-root $HSMPATH --archive=3 $LUSTREPATH
+12. Enable Lustre MDT changelogs (remember the returned client id):
+    $lctl --device temp-MDT0000 changelog_register
+    the return looks like : Registered changelog userid 'cl1'
+13. You can also check the status of hsm_control by going to /proc/fs/lustre/mdt/temp-MDT0000/hsm_control
+14. Robinhood initial scan
+    $robinhood --scan --once
+15. To start a robinhood daemon to run changelog continuously:
+    Specify the '--readlog' option in /etc/sysconfig/robinhood ( or if you manage multiple filesystems
+    on RHEL7: /etc/sysconfig/robinhood.''fsname''):
+    RBH_OPT="--readlog --run=all"
+    
+    create directory /var/log/robinhood [ for logging purpose ]
+    
+    Then 
+    systemctl start robinhood.service
+    #or if you manage multiple filesystems:
+    systemctl start robinhood@fsname
+
+    
