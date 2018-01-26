@@ -1,0 +1,51 @@
+1. To list OSTs
+       #lfs osts
+2. To take a full OST Offline
+       #lctl dl --> [show the status of all file system components]
+       #lctl --device 7 deactivate  --> [deactivate device no. 7]
+3. To Activate an InActive OST Back Online
+       #lctl --device 7 activate
+POOL
+4. To list available pools in fs
+       #lfs pool_list temp         -->[temp is the name of filesystem]
+5. To list OSTs in particular pool
+       #lfs pool_list temp.newpool -->[temp is the name of filesystem]
+                                      [newpool is the name of the pool]
+6. To create new pool
+       #lctl pool_new temp.newpool -->[temp is the name of filesystem]
+                                      [newpool is the name of the newpool you want to create]
+7. To add ost to pool
+       #lctl pool_add temp.newpool temp-OST0001_UUID  -->[temp.newpool is the name of the pool]
+                                                         [temp-OST0001_UUID is the name OST you want to add into the pool]
+8. To remove ost from pool
+       #lctl pool_remove temp.newpool temp-OST0001_UUUID  -->idem
+9. To remove a pool
+       #lctl pool_destroy temp.newpool      -->[pool must not contain any OSTs]
+10. After deleteing an OST Pool, what happens to the files and directories in that pool?
+    Files: *Retain their current stripe settings
+           *Retain the pool name in the layout
+    Directories: *Return to the file system's default stripe settings
+11. If you want to use OST Pools, you must FULLY ENFORCE it
+    Example1:    group0      /mnt/lustre
+                 group1      /mnt/lustre/dir-for-pool-1
+                 group2      /mnt/lustre/dir-for-pool-2
+                 WILL NOT WORK AS EXPECTED, GROUP0 CAN WRITE TO ALL OSTS
+    Example2:    group0      /mnt/lustre/dir-for-pool-0
+                 group1      /mnt/lustre/dir-for-pool-1
+                 group2      /mnt/lustre/dir-for-pool-2
+                 FULL ISOLATION
+13. Pool Rules
+    * OST membership in a pool may be changed
+    * An OST can be a member of multiple pools
+    * No ordering of OSTs in a pool is defined
+    * Striping (object allocation) within pools follows normal rules
+    * OST pool seetings are effective only at file creation
+14. To ASSIGN a directory to an OST Pool
+    #mkdir -p /tier1/projectX
+    #lfs setstripe -p temp.newpool tier1/projecX
+15. To find which file exists in particular pool
+    #lfs find --pool newpool /mnt/lustre
+16. To find which file exists in particular ost
+    #lfs find --obd temp-OST0001_UUID  /mnt/lustre
+17. To display disk capacity usage of a pool
+    #lfs df -p temp.newpool
