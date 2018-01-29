@@ -1,0 +1,26 @@
+The lfs setstripe command is used to dictate a particular striping configuration for a file or directory. 
+
+For a file, setstripe:
+gives an error if the file already exists (see Note below),else it creates an empty file with the desired stripe settings.
+
+Using setstripe on a directory:
+*changes the stripe settings for the directory,
+*any file subsequently created in the directory will inherit those settings,
+*does not affect existing files in directory.
+
+Note: 
+Once a file has been written to Lustre with a particular stripe configuration, you cannot simply use setstripe to change it. The file must be re-written with a new configuration. Generally, if you need to change the striping of a file, you can do one of two things:
+
+*using setstripe, create a new, empty file with the desired stripe settings and then copy the old file to the new file, or
+*setup a directory with the desired configuration and cp (not mv) the file into the directory
+
+
+The options for lfs setstripe are:
+
+-c to set the stripe count; 0 means use the system default (usually 1) and -1 means stripe over all available OSTs (up to the system-inherent limit of 160)
+-s to set the stripe size; 0 means use the system default (usually 1 MB) otherwise use k, m or g for KB, MB or GB respectively
+
+
+For example to configure the (existing) directory bigdir for holding very large files, we could set its stripe count to 50 and stripe size to 32 MB with:
+
+> lfs setstripe -c 50 -s 32m bigdir
