@@ -1,0 +1,12 @@
+If you are configuring lustre on VM, chances are you are not being able to attach ost to MDS. The problem is caused by lustre
+pick-up the wrong network interfaces. There are more than one network interfaces in VMs. I am using CENTOS 7.0, I have enp0s3 and enp0s8.
+You can specify the right network interface for lustre to use in a file named lustre.conf
+
+lustre.conf is placed in /etc/modprobe.d. If it is not there, you can create it.
+
+lustre.conf
+----------
+options lnet networks=tcp0(enp0s8)
+
+the configuration above force tcp0[lustre connection] to use enp0s8
+
