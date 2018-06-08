@@ -1,0 +1,1 @@
+mount -t lustre -o flock 192.168.37.20:/temp /mnt/lustre  
