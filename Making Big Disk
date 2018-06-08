@@ -7,4 +7,18 @@ b. fallocate -l 10G tengigfile
 c. truncate -s 10G tengigfile
    to add additional 10 more gigs to the end of the tengigfile
    truncate -s +10G tengigfile
-   
+
+Usually you want to make convert this empty file into block device
+
+losetup /dev/loop0 /root/tengigfile, where tengigfile is the file you have just 
+created above
+
+or
+
+create your own /dev/fake-dev0
+   mknod /dev/fake-dev0  b 7 200
+   where 7 is the major number of loop device driver, grep loop /proc/devices
+
+If you want it to be remounted after machine reboot
+   in /etc/rc.local, add the followings:
+        losetup /dev/loop0  /root/tengigfile
